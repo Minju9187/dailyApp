@@ -1,10 +1,13 @@
-import "./App.css";
+import { ModeToggle } from "./components/mode-toggle";
+import { ThemeProvider } from "./components/theme-provider";
 
 function App() {
   return (
-    <>
-      <h1>초기 세팅</h1>
-    </>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ModeToggle />
+      <h1>안녀어어어어ㅓ엉</h1>
+      <h2>하하</h2>
+    </ThemeProvider>
   );
 }
 
