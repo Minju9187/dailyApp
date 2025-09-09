@@ -1,25 +1,28 @@
 // src/App.tsx
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import MainLayout from "./components/layout/MainLayout";
-import LoginPage from "./pages/LoginPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import HomePage from "./pages/HomePage";
 import ErrorBoundary from "./components/shared/ErrorBoundary";
+import Loading from "./components/common/Loading";
+const MainLayout = lazy(() => import("./components/layout/MainLayout"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 const App: React.FC = () => {
   return (
     <div className="min-h-screen">
       <ErrorBoundary>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<HomePage />} />
-          </Route>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<HomePage />} />
+            </Route>
 
-          <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<LoginPage />} />
 
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </ErrorBoundary>
     </div>
   );
