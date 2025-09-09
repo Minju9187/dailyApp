@@ -31,15 +31,8 @@ const HomePage: React.FC = () => {
                 <WidgetComponent />
               </div>
             ) : (
-              <div
-                key={widget.id}
-                className="bg-destructive text-destructive-foreground rounded-lg p-4"
-              >
-                <p>오류: {widget.name} 위젯 컴포넌트를 찾을 수 없습니다.</p>
-                <p className="text-sm">
-                  (`widgetComponents` 객체에 해당 위젯이 추가되었는지
-                  확인하세요.)
-                </p>
+              <div key={widget.id} className="rounded-lg p-4">
+                <p>{widget.name} 서비스는 아직 개발중입니다.</p>
               </div>
             );
           })
