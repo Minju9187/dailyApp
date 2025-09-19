@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="dailyApp.applicatoin" target="17" />
+      <module name="dailyApp.applicatoin.main" target="17" />
+      <module name="dailyApp.applicatoin.test" target="17" />
+      <module name="dailyApp.contract" target="17" />
+      <module name="dailyApp.contract.main" target="17" />
+      <module name="dailyApp.contract.test" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
