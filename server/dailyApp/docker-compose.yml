@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:17-alpine            # 최신 안정 버전(멀티아키 지원)
+    container_name: pgsql
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin                 # 필요에 맞게 변경
+      POSTGRES_PASSWORD: 1q2w3e4r          # 필요에 맞게 변경
+      POSTGRES_DB: daily                 # 최초 생성 DB
+      TZ: Asia/Seoul
+    volumes:
+      - pgdata:/var/lib/postgresql/data           # 영속 볼륨
+      - ./initdb:/docker-entrypoint-initdb.d:ro   # (선택) 초기화 스크립트 (*.sql, *.sh)
+
+volumes:
+  pgdata:
