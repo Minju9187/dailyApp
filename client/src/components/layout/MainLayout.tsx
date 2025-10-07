@@ -1,15 +1,9 @@
 import React, { useEffect, useCallback } from "react";
 import { Outlet } from "react-router-dom"; // Outlet 임포트
-import {
-  MdWbSunny,
-  MdNightlight,
-  MdMenu,
-  MdClose,
-  MdAddCircleOutline,
-  MdRemoveCircleOutline,
-} from "react-icons/md";
 import { useAppStore } from "../../store/useAppStore";
 import { WidgetConfig } from "../../types";
+import Header from "./Header";
+import Sidebar from "./Sidebar";
 
 // ALL_AVAILABLE_WIDGETS_FOR_UI는 MainLayout.tsx에서만 사용될 더미 데이터입니다.
 // 실제 앱에서는 스토어에서 가져오거나, 백엔드에서 받아와야 합니다.
@@ -78,6 +72,23 @@ const MainLayout = () => {
     setIsSidebarOpen((prev) => !prev);
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const isLargeScreen = window.innerWidth >= 768;
+
+      if (isLargeScreen && isSidebarOpen) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isSidebarOpen]);
+
   const activeWidgetIds = React.useMemo(
     () => new Set(activeWidgets.map((w) => w.id)),
     [activeWidgets],
@@ -92,38 +103,12 @@ const MainLayout = () => {
         } `}
       >
         {/* 헤더 또는 상단바 */}
-        <header className="bg-card border-border flex items-center justify-between border-b p-4 shadow-sm">
-          <h1 className="text-card-foreground text-xl font-bold">
-            나만의 대시보드
-          </h1>
-          <div className="flex items-center space-x-4">
-            {/* 다크 모드 토글 버튼 */}
-            <button
-              onClick={toggleDarkMode}
-              className="hover:bg-muted focus:ring-ring rounded-full p-2 focus:ring-2 focus:outline-none"
-              aria-label="Toggle dark mode"
-            >
-              {isDarkMode ? (
-                <MdWbSunny className="text-foreground h-6 w-6" />
-              ) : (
-                <MdNightlight className="text-foreground h-6 w-6" />
-              )}
-            </button>
-
-            {/* 사이드바 토글 버튼 */}
-            <button
-              onClick={toggleSidebar}
-              className="hover:bg-muted focus:ring-ring rounded-full p-2 focus:ring-2 focus:outline-none"
-              aria-label="Toggle sidebar"
-            >
-              {isSidebarOpen ? (
-                <MdClose className="text-foreground h-6 w-6" />
-              ) : (
-                <MdMenu className="text-foreground h-6 w-6" />
-              )}
-            </button>
-          </div>
-        </header>
+        <Header
+          isDarkMode={isDarkMode}
+          toggleDarkMode={toggleDarkMode}
+          isSidebarOpen={isSidebarOpen}
+          toggleSidebar={toggleSidebar}
+        />
         <Outlet />
       </main>
 
@@ -136,89 +121,15 @@ const MainLayout = () => {
       )}
 
       {/* 슬라이드 사이드바 */}
-      <aside
-        className={`bg-sidebar text-sidebar-foreground fixed inset-y-0 right-0 z-50 w-80 transform shadow-lg transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "translate-x-full"} md:border-sidebar-border md:static md:translate-x-0 md:border-l md:shadow-none`}
-      >
-        <div className="border-sidebar-border flex items-center justify-between border-b p-4">
-          <h2 className="text-sidebar-foreground text-xl font-bold">
-            위젯 설정
-          </h2>
-          <button
-            onClick={toggleSidebar}
-            className="hover:bg-sidebar-accent focus:ring-sidebar-ring rounded-full p-2 focus:ring-2 focus:outline-none md:hidden"
-            aria-label="Close sidebar"
-          >
-            <MdClose className="text-sidebar-foreground h-6 w-6" />
-          </button>
-        </div>
-        <div className="flex flex-col space-y-6 p-4">
-          {/* 내 위젯 목록 */}
-          <div>
-            <h3 className="text-sidebar-foreground mb-3 text-lg font-semibold">
-              내 위젯
-            </h3>
-            {activeWidgets.length === 0 ? (
-              <p className="text-sidebar-muted-foreground text-sm">
-                추가된 위젯이 없습니다.
-              </p>
-            ) : (
-              <ul className="space-y-2">
-                {activeWidgets
-                  .sort((a, b) => a.order - b.order)
-                  .map((widget) => (
-                    <li
-                      key={widget.id}
-                      className="bg-sidebar-card border-sidebar-border flex items-center justify-between rounded-md border p-2"
-                    >
-                      <span className="text-sidebar-foreground text-sm">
-                        {widget.name}
-                      </span>
-                      <button
-                        onClick={() => removeWidget(widget.id)}
-                        className="text-destructive hover:text-destructive-foreground hover:bg-destructive/10 rounded-full p-1"
-                        aria-label={`Remove ${widget.name}`}
-                      >
-                        <MdRemoveCircleOutline className="h-5 w-5" />
-                      </button>
-                    </li>
-                  ))}
-              </ul>
-            )}
-          </div>
-
-          {/* 사용 가능한 위젯 목록 */}
-          <div>
-            <h3 className="text-sidebar-foreground mb-3 text-lg font-semibold">
-              위젯 추가
-            </h3>
-            <ul className="space-y-2">
-              {ALL_AVAILABLE_WIDGETS_FOR_UI.map((widget) => (
-                <li
-                  key={widget.id}
-                  className="bg-sidebar-card border-sidebar-border flex items-center justify-between rounded-md border p-2"
-                >
-                  <div className="flex flex-col">
-                    <span className="text-sidebar-foreground text-sm font-medium">
-                      {widget.name}
-                    </span>
-                    <span className="text-sidebar-muted-foreground text-xs">
-                      {widget.description}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => addWidget(widget)}
-                    disabled={activeWidgetIds.has(widget.id)}
-                    className="text-primary hover:text-primary-foreground hover:bg-primary/10 disabled:text-muted rounded-full p-1 disabled:cursor-not-allowed disabled:opacity-50"
-                    aria-label={`Add ${widget.name}`}
-                  >
-                    <MdAddCircleOutline className="h-5 w-5" />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </aside>
+      <Sidebar
+        isSidebarOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        activeWidgets={activeWidgets}
+        removeWidget={removeWidget}
+        availableWidgets={ALL_AVAILABLE_WIDGETS_FOR_UI}
+        addWidget={addWidget}
+        activeWidgetIds={activeWidgetIds}
+      />
     </div>
   );
 };
