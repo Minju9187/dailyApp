@@ -7,7 +7,7 @@ import {
 import { Menu } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ModeToggle } from "./ModeToggle";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Link } from "react-router";
 import { createPortal } from "react-dom";
 import useModal from "@/hooks/useModal";
