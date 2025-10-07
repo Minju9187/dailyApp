@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function WeatherWidget() {
-  return <div>WeatherWidget</div>;
+  return <div className="">WeatherWidget</div>;
 }

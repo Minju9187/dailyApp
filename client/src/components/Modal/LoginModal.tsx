@@ -1,7 +1,7 @@
 import Modal from "./Modal";
 import gitHubIcon from "@/assets/github-mark-white.png";
 import { ModalProps } from "@/types/Modal";
-import { Button } from "../ui/button";
+import { Button } from "../ui/Button";
 
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
 const REDIRECT_URI = import.meta.env.VITE_GITHUB_REDIRECT_URI;

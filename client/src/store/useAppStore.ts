@@ -82,7 +82,7 @@ const ALL_AVAILABLE_WIDGETS: WidgetConfig[] = [
   },
 ];
 
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore = create<AppState>((set) => ({
   ...getInitialState(), // 초기 상태 적용
 
   toggleDarkMode: () => {

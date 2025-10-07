@@ -15,7 +15,7 @@ const HomePage: React.FC = () => {
   const activeWidgets = useAppStore((state) => state.activeWidgets);
 
   return (
-    <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="flex flex-col gap-3 p-6">
       <h2 className="col-span-full mb-4 text-3xl font-bold">내 대시보드</h2>
       {activeWidgets.length === 0 ? (
         <p className="text-muted-foreground col-span-full text-center">
@@ -27,11 +27,17 @@ const HomePage: React.FC = () => {
           .map((widget) => {
             const WidgetComponent = widgetComponents[widget.component];
             return WidgetComponent ? (
-              <div key={widget.id}>
+              <div
+                key={widget.id}
+                className="bg-card border-border rounded-lg border p-4 shadow-md"
+              >
                 <WidgetComponent />
               </div>
             ) : (
-              <div key={widget.id} className="rounded-lg p-4">
+              <div
+                key={widget.id}
+                className="bg-card border-border rounded-lg border p-4 shadow-md"
+              >
                 <p>{widget.name} 서비스는 아직 개발중입니다.</p>
               </div>
             );

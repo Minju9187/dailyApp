@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function NewsWidget() {
-  return <div>NewsWidget</div>;
+  return <div className="">NewsWidget</div>;
 }
