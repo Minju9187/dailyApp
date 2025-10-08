@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: daily-api
+  profiles:
+    include: app, connection
+    group:
+      "dev": "app_dev, connection_dev"
+      "stage": "app_stage, connection_stage"
+      "prod": "app, connection"
+    active: dev
+

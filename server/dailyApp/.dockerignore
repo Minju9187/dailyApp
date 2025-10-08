@@ -1,0 +1,15 @@
+# Gradle/Maven 산출물
+**/build
+**/out
+**/target
+.gradle
+.mvn
+# VCS/IDE
+.git
+**/.idea
+**/*.iml
+**/.DS_Store
+# node
+**/node_modules
+# 기타 불필요 파일
+**/.env

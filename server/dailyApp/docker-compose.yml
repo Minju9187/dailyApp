@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:17-alpine            # 최신 안정 버전(멀티아키 지원)
+    image: ykh8383633/pgsql            # 최신 안정 버전(멀티아키 지원)
     container_name: pgsql
     restart: unless-stopped
     ports:
@@ -13,6 +13,22 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data           # 영속 볼륨
       - ./initdb:/docker-entrypoint-initdb.d:ro   # (선택) 초기화 스크립트 (*.sql, *.sh)
+
+  api:
+    image: ykh8383633/daily-api:latest
+    container_name: daily-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      #SPRING_PROFILES_ACTIVE: "prod"
+      #JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Xms256m -Xmx1024m"
+      TZ: "Asia/Seoul"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   pgdata:

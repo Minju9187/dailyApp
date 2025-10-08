@@ -1,0 +1,56 @@
+# syntax=docker/dockerfile:1.7
+FROM ubuntu:22.04 AS build
+
+RUN apt-get update && apt-get install -y openjdk-17-jdk curl unzip \
+  && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# 1) 빌드 스크립트/래퍼 먼저 복사 → 의존성 캐시 최대화
+COPY gradlew settings.gradle.kts build.gradle.kts gradle.properties ./
+COPY gradle ./gradle
+# 모듈별 build 파일만 먼저 복사 (캐시 최적화; 실패하면 다음 단계에서 전체 복사됨)
+# *주의*: Dockerfile의 COPY는 재귀 글롭이 제한적이라, 필요한 경로를 명시하세요.
+# 예: apps/api, core, domain, infra 등
+COPY api/build.gradle.kts api/
+COPY infrastructure/build.gradle.kts infrastructure/
+COPY application/build.gradle.kts application/
+COPY domain/build.gradle.kts domain/
+COPY contracts/build.gradle.kts contracts/
+COPY common/build.gradle.kts common/
+
+
+# 2) 의존성만 당겨서 캐시 (소스 변경 전 단계)
+RUN --mount=type=cache,target=/root/.gradle ./gradlew --no-daemon help
+
+# 3) 이제 소스 전체 복사 (멀티모듈 소스 포함)
+COPY . .
+
+# 어떤 모듈을 빌드할지 인자화
+ARG APP_MODULE=api
+RUN --mount=type=cache,target=/root/.gradle ./gradlew --no-daemon :${APP_MODULE}:clean :${APP_MODULE}:bootJar
+
+
+FROM ubuntu:22.04 AS runtime
+RUN apt-get update && apt-get install -y openjdk-17-jre-headless wget \
+  && rm -rf /var/lib/apt/lists/*
+
+ENV APP_HOME=/opt/app
+WORKDIR $APP_HOME
+
+RUN useradd -ms /bin/bash spring
+
+# 위에서 지정한 APP_MODULE의 산출물만 복사
+ARG APP_MODULE=api
+COPY --from=build /app/${APP_MODULE}/build/libs/*.jar app.jar
+
+RUN chown -R spring:spring $APP_HOME
+USER spring
+
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:InitialRAMPercentage=25.0 -XX:MaxRAMPercentage=75.0 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp"
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD wget -qO- http://localhost:8080/actuator/health | grep -q '"status":"UP"' || exit 1
+
+EXPOSE 8080
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
