@@ -11,4 +11,9 @@ class AuthService(
     fun getOAuthLoginUrl(provider: String): URI {
         return oathClient.getLoginUrl(provider)
     }
+
+    fun oauthLogin(provider: String, code: String){
+        val auth = oathClient.authenticate(provider, code)
+        // todo save session
+    }
 }

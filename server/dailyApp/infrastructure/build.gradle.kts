@@ -5,6 +5,8 @@ plugins {
 dependencies {
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.2.4"))
     implementation("org.springframework:spring-web")
+    implementation("org.springframework:spring-webflux")     // WebClient API
+    implementation("io.projectreactor.netty:reactor-netty")
 
     implementation(project(":domain"))
     implementation(project(":common"))

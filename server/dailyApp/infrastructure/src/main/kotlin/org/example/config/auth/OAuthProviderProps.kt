@@ -17,8 +17,8 @@ class OAuthProviderProps(
     private var grantType: OAuthGrantType = OAuthGrantType.AUTHORIZATION_CODE
     private var state: String = DEFAULT_STATE
 
-    fun getLoginUrl(): URI {
-        return UriComponentsBuilder.newInstance()
+    val loginUri: URI
+        get() = UriComponentsBuilder.newInstance()
             .uri(URI.create(loginUrl))
             .queryParam("response_type", "code")
             .queryParam("client_id", clientId)
@@ -26,9 +26,11 @@ class OAuthProviderProps(
             .queryParam("state", state)
             .build()
             .toUri()
-    }
 
-    fun getTokenUrl(code: String?): URI {
+    val meUri: URI
+        get() = URI.create(meUrl)
+
+    fun createTokenUri(code: String?): URI {
         return UriComponentsBuilder.newInstance()
             .uri(URI.create(tokenUrl))
             .queryParam("grant_type", grantType.getGrantType())

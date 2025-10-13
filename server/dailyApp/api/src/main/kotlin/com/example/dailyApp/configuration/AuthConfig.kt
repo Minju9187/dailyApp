@@ -2,7 +2,7 @@ package com.example.dailyApp.configuration
 
 import org.example.auth.port.OAuthClient
 import org.example.config.auth.OAuthProviderProps
-import org.example.external.OAuthClientAdaptor
+import org.example.externals.OAuthClientAdapter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -43,6 +43,6 @@ class AuthConfig(
 
     @Bean
     fun oauthClient(naverOAuthProviderProps: OAuthProviderProps): OAuthClient {
-        return OAuthClientAdaptor(oathProviderPropsList = mutableListOf(naverOAuthProviderProps))
+        return OAuthClientAdapter(oathProviderPropsList = mutableListOf(naverOAuthProviderProps))
     }
 }
